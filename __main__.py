@@ -140,6 +140,27 @@ class PostsScraper (WebScraping):
                 self.refresh_selenium()
                 
             logger.info (f"\tTotal posts scraped: {posts_num}")
+            
+    def validate_keywords (self, keywords: list):
+        """ Validate if a post contains specific keywords
+
+        Args:
+            keywords (list): list of keywords to check in each post
+        """
+        
+        # Generate new list with "keyword" column with "False" value
+        logger.info ("Validating keywords...")
+        new_data = list(map(lambda row: row + [False], self.data))
+        new_data[0][-1] = "keyword_found"
+        
+        # Update "keyword" column with "True" value if a keyword is found
+        for row in new_data:
+            for keyword in keywords:
+                if keyword in row[1]:
+                    row[-1] = True
+                    break
+        
+        self.data = new_data
                 
     def get_data (self):
         """ return post scraped data as a nested list """
@@ -151,11 +172,19 @@ if __name__ == "__main__":
     users_path = os.path.join(CURRENT_FOLDER, "users.txt")
     with open(users_path, encoding="utf-8") as file:
         users = file.read().splitlines()
+        
+    # Get keywords from txt file
+    keywords_path = os.path.join(CURRENT_FOLDER, "keywords.txt")
+    with open(keywords_path, encoding="utf-8") as file:
+        keywords = file.read().splitlines()
 
+    # Scrape
     post_scraper = PostsScraper(users)
     post_scraper.scrape_posts()
+    post_scraper.validate_keywords(keywords)
     data = post_scraper.get_data()
     
+    # Save output data in csv file
     print ()
     logger.info ("Saving data in csv file...")    
     csv_path = os.path.join (CURRENT_FOLDER, "posts.csv")

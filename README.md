@@ -21,18 +21,18 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/darideveloper/europeanstartups_scraper">
-    <img src="imgs/logo.png" alt="Logo" width="200" height="80">
+  <a href="https://github.com/darideveloper/facebook-posts-scraper">
+    <img src="imgs/logo.jpg" alt="Logo" width="200" height="120">
   </a>
 
-<h3 align="center">Europeanstartups Scraper</h3>
+<h3 align="center">Facebook Post Scraper</h3>
 
   <p align="center">
-    Python scraper for extract data from the page <a href="https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union">https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union</a>, using python, and a google chrome data with a premium account already logged.
+    Python scraper for get facebook post from specific users, and save the output data in csv file.
     <br />
-    <a href="https://github.com/darideveloper/europeanstartups_scraper/issues">Report Bug</a>
+    <a href="https://github.com/darideveloper/facebook-posts-scraper/issues">Report Bug</a>
     ·
-    <a href="https://github.com/darideveloper/europeanstartups_scraper/issues">Request Feature</a>
+    <a href="https://github.com/darideveloper/facebook-posts-scraper/issues">Request Feature</a>
   </p>
 </div>
 
@@ -68,35 +68,19 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Web page Screenshot][product-screenshot]](webpage)
-
-The project extract all results from the page [https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union](https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union), and save the output data in a csv file.
-
-The project is a python script, that use a google chrome data with a premium account already logged, to extract the data from the page.
+The project opens each profius page, scroll for load all the posts, extract the data from each posts and validate if the post have specific keywords.
 
 The data extract is:
 
-* NAME
-* DEALROOM SIGNAL
-* MARKET
-* TYPE
-* LAUNCH DATE
-* VALUATION
-* FUNDING
-* LOCATION
-* LAST ROUND
-* REVENUE
-* STATUS
-* GROWTH STAGE
-* EMPLOYEES
-* OWNERSHIP
-* MARKET CAP
-* DEBT
-* URL WEBSITE
-* LINKEDIN PROFILE
-* TWITTER PROFILE
-* FIRM VALUATION
-* TAGS
+* user
+* link
+* text
+* reactions number
+* comments number
+* shares number
+* shared form user (just in case that the post is shared)
+* type (post or shared post)
+* keyword found (if the post have one ore more of the keywords)
 
 ### Built With
 
@@ -124,39 +108,58 @@ To get a local copy up and running follow these simple example steps.
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/darideveloper/europeanstartups_scraper.git
+   git clone https://github.com/darideveloper/facebook-posts-scraper.git
    ```
 2. Install python packages (opening a terminal in the project folder)
    ```sh
    python -m pip install -r requirements.txt 
    ```
-3. Update your chrome path in the `.env` file (note: the chrome path is the folder where chrome data its installed)
-   ```js
-   CHROME_PATH = C:\Users\<<your-user-name>>\AppData\Local\Google\Chrome\User Data
+3. Update your settings in the `.env` file:
+   ```sh
+    CHROME_PATH = C:\Users\<<your-user-name>>\AppData\Local\Google\Chrome\User Data # Path of your chrome data folder
+    SHOW_BROWSER = False # Show or hide the google chrome window
+    MAX_POSTS = 50 # Max number of posts to extract from each user
    ```
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-1. Go to https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union and create an account (if you have problems with your email, try with a [proton email](https://proton.me/es/mail))
-2. Activate the premium trial or buy a premium account
-3. be sure to keep the account logged in the browser.
-4. Open a terminal in the project folder
-5. Run the project folder with python: 
-    ```sh
-    python .
+1. Login in your facebook account in the google chrome browser.
+2. Set the users in the `users.txt` file (the user name is the last part of the url). Sample: 
+    ```txt
+    abdenago.lopezh
+    freddyvega
+    sunoticiasuy
+    profile.php?id=100011069504105
+    Dragster.Systems
+    ReneRojas1968
     ```
-6. Wait until the script finish, and check the `output.csv` file in the project folder (note: while the script its running, you can't use google chrome).
+3. Set the keywords in the `keywords.txt` file. Sapmple:
+    ```txt
+    and
+    hello
+    this
+    el
+    la
+    y
+    este
+    ```
+4. Run the script, opening a terminal in the project folder
+   ```sh
+   python __main__.py
+   ```
+4. The output data will be saved in the `posts.csv` file.
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Use chrome data fro avoid login in the page
-- [x] Extract all data from the page
-- [x] Save output data in csv file 
+- [x] Load users from file
+- [x] Load keywords from file
+- [x] Scroll for show all the posts
+- [x] Extract data from each post
+- [x] Save data in csv file
 
-See the [open issues](https://github.com/darideveloper/europeanstartups_scraper/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/darideveloper/facebook-posts-scraper/issues) for a full list of proposed features (and known issues).
 
 
 <!-- CONTRIBUTING -->
@@ -187,21 +190,21 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Darideveloper - [@developerdari](https://twitter.com/developerdari) - darideveloper@gmail.com.com
 
-Project Link: [https://github.com/darideveloper/europeanstartups_scraper](https://github.com/darideveloper/europeanstartups_scraper)
+Project Link: [https://github.com/darideveloper/facebook-posts-scraper](https://github.com/darideveloper/facebook-posts-scraper)
 
 
 <!-- MARKDOWN LINKS & imgs -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/darideveloper/europeanstartups_scraper.svg?style=for-the-badge
-[contributors-url]: https://github.com/darideveloper/europeanstartups_scraper/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/darideveloper/europeanstartups_scraper.svg?style=for-the-badge
-[forks-url]: https://github.com/darideveloper/europeanstartups_scraper/network/members
-[stars-shield]: https://img.shields.io/github/stars/darideveloper/europeanstartups_scraper.svg?style=for-the-badge
-[stars-url]: https://github.com/darideveloper/europeanstartups_scraper/stargazers
-[issues-shield]: https://img.shields.io/github/issues/darideveloper/europeanstartups_scraper.svg?style=for-the-badge
-[issues-url]: https://github.com/darideveloper/europeanstartups_scraper/issues
-[license-shield]: https://img.shields.io/github/license/darideveloper/europeanstartups_scraper.svg?style=for-the-badge
-[license-url]: https://github.com/darideveloper/europeanstartups_scraper/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/darideveloper/facebook-posts-scraper.svg?style=for-the-badge
+[contributors-url]: https://github.com/darideveloper/facebook-posts-scraper/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/darideveloper/facebook-posts-scraper.svg?style=for-the-badge
+[forks-url]: https://github.com/darideveloper/facebook-posts-scraper/network/members
+[stars-shield]: https://img.shields.io/github/stars/darideveloper/facebook-posts-scraper.svg?style=for-the-badge
+[stars-url]: https://github.com/darideveloper/facebook-posts-scraper/stargazers
+[issues-shield]: https://img.shields.io/github/issues/darideveloper/facebook-posts-scraper.svg?style=for-the-badge
+[issues-url]: https://github.com/darideveloper/facebook-posts-scraper/issues
+[license-shield]: https://img.shields.io/github/license/darideveloper/facebook-posts-scraper.svg?style=for-the-badge
+[license-url]: https://github.com/darideveloper/facebook-posts-scraper/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/francisco-dari-hernandez-6456b6181/
 [product-screenshot]: ./imgs/screenshot.gif
@@ -210,4 +213,4 @@ Project Link: [https://github.com/darideveloper/europeanstartups_scraper](https:
 [gmail-shield]: https://img.shields.io/badge/-gmail-black.svg?style=for-the-badge&logo=gmail&colorB=555&logoColor=white
 [fiverr-shield]: https://img.shields.io/badge/-fiverr-black.svg?style=for-the-badge&logo=fiverr&colorB=555&logoColor=white
 
-<span>Last code update: <time datetime="2022-11-29" class="last-update">2022-11-29</time>
+<span>Last code update: <time datetime="2022-11-29" class="last-update">2023-01-21</time>

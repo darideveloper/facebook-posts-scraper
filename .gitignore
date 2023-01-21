@@ -12,3 +12,4 @@ db.*
 *.sqlite3
 *.pyc
 posts.csv
+keywords.txt
