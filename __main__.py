@@ -92,7 +92,7 @@ class PostsScraper (WebScraping):
                     link = link_elem.get_attribute("href")
                     
                     # Skip post if already scraped
-                    if link in posts_links:
+                    if link in posts_links or "#" in link:
                         continue
                     
                     # Save post link in history
