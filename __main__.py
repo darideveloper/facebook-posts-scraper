@@ -24,12 +24,11 @@ class PostsScraper (WebScraping):
 
         # Class variables
         self.selectors_text = {
-            # "text": '[data-ad-comet-preview="message"] .xu06os2.x1ok221b span[dir="auto"] > div.x11i5rnm.xat24cr.x1mh8g0r.x1vvkbs > div[dir="auto"][style^="text-align"]',
             "text": '[data-ad-comet-preview="message"]',
             "reactions_num": '[role="button"] > span.xt0b8zv.x1jx94hy.xrbpyxo.xl423tq span.x1e558r4',
             "comments_num": 'div:nth-child(2) > span.x4k7w5x.x1h91t0o.x1h9r5lt.xv2umb2 [aria-expanded="true"] > span.x193iq5w.xeuugli.x13faqbe.x1vvkbs',
             "shares_num": 'div:nth-child(3) > span.x4k7w5x.x1h91t0o.x1h9r5lt.xv2umb2 [tabindex="0"] > span.x193iq5w.xeuugli.x13faqbe.x1vvkbs',
-            # "shared_user": '.x1y332i5 > .x1a8lsjc.x1swvt13.x1pi30zi .xu06os2.x1ok221b strong > span'
+            "shared_form_user": '.x1y332i5 > .x1a8lsjc.x1swvt13.x1pi30zi .xu06os2.x1ok221b strong > span'
         }
         self.selector_post = "div[aria-posinset]"
         self.selector_link = 'span[id^="jsc_c"] a.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd'
@@ -110,9 +109,17 @@ class PostsScraper (WebScraping):
                         elem_text = " ".join([word for word in elem_text.split() if word not in clean_words])
                     
                     row.append(elem_text)
-
+                    
+                # Save post type
+                post_type = "post"
+                if row[-1]:
+                    post_type = "shared"
+                row.append(post_type)
+                    
+                # Save data
                 data.append(row)
                 logger.debug (row)
+                print ()
                 
             print ()
 
