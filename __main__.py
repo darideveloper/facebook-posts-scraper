@@ -1,4 +1,5 @@
 import os
+import csv
 from time import sleep
 from logs import logger
 from dotenv import load_dotenv
@@ -14,13 +15,11 @@ CURRENT_FOLDER = os.path.dirname(__file__)
 class PostsScraper (WebScraping):
 
     def __init__(self, users: list):
+        
         # Read environment variables
         chrome_folder = os.getenv("CHROME_FOLDER")
         headless = os.getenv("SHOW_BROWSER") == "False"
         self.max_posts = int(os.getenv("MAX_POSTS"))
-
-        # div.x11i5rnm.xat24cr.x1mh8g0r.x1vvkbs.xdj266r.x126k92a div.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd[role="button"][role="button"]
-        # div.x1vvkbs div.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd[role="button"][role="button"] 
 
         # Class variables
         self.selectors_text = {
@@ -34,6 +33,7 @@ class PostsScraper (WebScraping):
         self.selector_link = 'span[id^="jsc_c"] a.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd'
         self.selector_show_all = f'{self.selectors_text["text"]} div.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd[role="button"][role="button"]'
         self.users = users
+        self.data = [["link"] + list(self.selectors_text.keys()) + ["type"]]
 
         # Start scraper
         super().__init__(chrome_folder=chrome_folder, headless=headless, start_killing=True)
@@ -41,12 +41,10 @@ class PostsScraper (WebScraping):
     def scrape_posts(self):
         """ Scrape all facebook posts from specific user """
 
-        # Generate header based on selectores
-        data = list(self.selectors_text.keys())
-
+        # Loop for each user
         for user in self.users:
 
-            print(f"Current user: {user}")
+            logger.info (f"Current user: {user}")
 
             # Open user profile
             user_page = f"https://www.facebook.com/{user}"
@@ -74,10 +72,16 @@ class PostsScraper (WebScraping):
             #     # Update last posts number
             #     last_posts_num = posts_num
 
+            # Posts counter
+            posts_num = 0
+
             # Loop for each post found
             logger.info(f"\tScraping posts...")
             posts = self.get_elems(self.selector_post)                
             for post in posts:
+                
+                # Incress counter
+                posts_num += 1
                                 
                 # Hover for load post link
                 link_elem = post.find_element(By.CSS_SELECTOR, self.selector_link)
@@ -116,18 +120,13 @@ class PostsScraper (WebScraping):
                     post_type = "shared"
                 row.append(post_type)
                     
-                # Save data
-                data.append(row)
+                # Save data in list
+                self.data.append(row)
                 logger.debug (row)
-                print ()
-                
-            print ()
-
-    def auto_run(self):
-        """ Auto run for extract and save data """
-
-        self.scrape_posts()
-
+          
+    def get_data (self):
+        """ return post scraped data as a nested list """
+        return self.data
 
 if __name__ == "__main__":
 
@@ -137,4 +136,12 @@ if __name__ == "__main__":
         users = file.read().splitlines()
 
     post_scraper = PostsScraper(users)
-    post_scraper.auto_run()
+    post_scraper.scrape_posts()
+    data = post_scraper.get_data()
+    
+    logger.info ("Saving data in csv file...")    
+    csv_path = os.path.join (CURRENT_FOLDER, "posts.csv")
+    with open (csv_path, "w", encoding="utf-8", newline='') as file:
+        csv_writer = csv.writer(file)
+        csv_writer.writerows(data)
+    logger.info ("Done!")
