@@ -34,7 +34,7 @@ class PostsScraper (WebScraping):
         self.selector_link_hidden = f'{self.selector_link}[href="#"]'
         self.selector_show_all = f'{self.selectors_text["text"]} div.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd[role="button"][role="button"]'
         self.users = users
-        self.data = [["link"] + list(self.selectors_text.keys()) + ["type"]]
+        self.data = [["user", "link"] + list(self.selectors_text.keys()) + ["type"]]
 
         # Start scraper
         super().__init__(chrome_folder=chrome_folder, headless=headless, start_killing=True)
@@ -102,7 +102,7 @@ class PostsScraper (WebScraping):
                     posts_num += 1
                     
                     # Get text data from posts based in selectors
-                    row = [link]
+                    row = [user, link]
                     clean_words = ["\n", "comments", "shares", "comment", "share"]
                     for selector in self.selectors_text.values():
                         try:
