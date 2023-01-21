@@ -28,9 +28,9 @@ class PostsScraper (WebScraping):
         self.selectors_text = {
             # "text": '[data-ad-comet-preview="message"] .xu06os2.x1ok221b span[dir="auto"] > div.x11i5rnm.xat24cr.x1mh8g0r.x1vvkbs > div[dir="auto"][style^="text-align"]',
             "text": '[data-ad-comet-preview="message"]',
-            # "reactions_num": '[role="button"] > span.xt0b8zv.x1jx94hy.xrbpyxo.xl423tq span.x1e558r4',
-            # "comments_num": 'span.x4k7w5x.x1h91t0o.x1h9r5lt.xv2umb2 [aria-expanded="true"] > span.x193iq5w.xeuugli.x13faqbe.x1vvkbs',
-            # "shares_num": 'span.x4k7w5x.x1h91t0o.x1h9r5lt.xv2umb2 [tabindex="0"] > span.x193iq5w.xeuugli.x13faqbe.x1vvkbs',
+            "reactions_num": '[role="button"] > span.xt0b8zv.x1jx94hy.xrbpyxo.xl423tq span.x1e558r4',
+            "comments_num": 'div:nth-child(2) > span.x4k7w5x.x1h91t0o.x1h9r5lt.xv2umb2 [aria-expanded="true"] > span.x193iq5w.xeuugli.x13faqbe.x1vvkbs',
+            "shares_num": 'div:nth-child(3) > span.x4k7w5x.x1h91t0o.x1h9r5lt.xv2umb2 [tabindex="0"] > span.x193iq5w.xeuugli.x13faqbe.x1vvkbs',
             # "shared_user": '.x1y332i5 > .x1a8lsjc.x1swvt13.x1pi30zi .xu06os2.x1ok221b strong > span'
         }
         self.selector_post = "div[aria-posinset]"
@@ -45,13 +45,11 @@ class PostsScraper (WebScraping):
         """ Scrape all facebook posts from specific user """
 
         # Generate header based on selectores
-        data = ["date"] + list(self.selectors_text.keys())
+        data = list(self.selectors_text.keys())
 
         for user in self.users:
 
             print(f"Current user: {user}")
-
-            logger.info(f"\tLoading posts...")
 
             # Open user profile
             user_page = f"https://www.facebook.com/{user}"
@@ -95,12 +93,16 @@ class PostsScraper (WebScraping):
 
                 # Get text data from posts based in selectors
                 row = []
+                clean_words = ["\n", "comments", "shares", "comment", "share"]
                 for selector in self.selectors_text.values():
                     # elem_text = " ".join(list(map(lambda elem: elem.text, post.find_elements(By.CSS_SELECTOR, selector))))
-                    elem_text = post.find_element(By.CSS_SELECTOR, selector).text
-                    if not elem_text:
+                    try:
+                        elem_text = post.find_element(By.CSS_SELECTOR, selector).text
+                    except:
                         elem_text = ""
-                    elem_text = elem_text.strip().replace("\n", " ")
+                    else:
+                        elem_text = " ".join([word for word in elem_text.split() if word not in clean_words])
+                    
                     row.append(elem_text)
 
                 data.append(row)
