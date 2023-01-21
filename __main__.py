@@ -52,78 +52,86 @@ class PostsScraper (WebScraping):
             sleep(2)
             self.refresh_selenium()
 
-            last_posts_num = 0
-
-            # # Load all posts of user
-            # while True:
-
-            #     # Scroll down for load more posts
-            #     self.go_bottom()
-            #     sleep(3)
-
-            #     # Get number of posts
-            #     self.refresh_selenium()
-            #     posts_num = len(self.get_elems(self.selector_post))
-
-            #     # End loop if all posts are loaded
-            #     if posts_num == last_posts_num or self.max_posts and posts_num >= self.max_posts:
-            #         break
-
-            #     # Update last posts number
-            #     last_posts_num = posts_num
-
-            # Posts counter
+            # Posts counters
             posts_num = 0
+            last_posts_num = 0
+            posts_links = []
 
-            # Loop for each post found
-            logger.info(f"\tScraping posts...")
-            posts = self.get_elems(self.selector_post)                
-            for post in posts:
-                
-                # Incress counter
-                posts_num += 1
-                                
-                # Hover for load post link
-                link_elem = post.find_element(By.CSS_SELECTOR, self.selector_link)
-                hover = ActionChains(self.driver).move_to_element(link_elem).perform()
-                
-                # Display full text of current post
-                try:
-                    show_all_button = post.find_element(By.CSS_SELECTOR, self.selector_show_all)
-                except:
-                    pass
-                else:
-                    self.driver.execute_script("arguments[0].click();", show_all_button)
-                    
-                # Get post link
-                self.refresh_selenium()
-                link_elem = post.find_element(By.CSS_SELECTOR, self.selector_link)
-                link = link_elem.get_attribute("href")
-                
-                # Get text data from posts based in selectors
-                row = [link]
-                clean_words = ["\n", "comments", "shares", "comment", "share"]
-                for selector in self.selectors_text.values():
-                    # elem_text = " ".join(list(map(lambda elem: elem.text, post.find_elements(By.CSS_SELECTOR, selector))))
+            # Loop for load all posts
+            while True:
+
+                # Loop for each post visible in the current page
+                logger.info(f"\tScraping current posts...")
+                posts = self.get_elems(self.selector_post)                
+                for post in posts:
+                        
+                    # Hover for load post link
+                    link_elem = post.find_element(By.CSS_SELECTOR, self.selector_link)
                     try:
-                        elem_text = post.find_element(By.CSS_SELECTOR, selector).text
+                        hover = ActionChains(self.driver).move_to_element(link_elem).perform()
                     except:
-                        elem_text = ""
+                        pass
+                    
+                    # Display full text of current post
+                    try:
+                        show_all_button = post.find_element(By.CSS_SELECTOR, self.selector_show_all)
+                    except:
+                        pass
                     else:
-                        elem_text = " ".join([word for word in elem_text.split() if word not in clean_words])
+                        self.driver.execute_script("arguments[0].click();", show_all_button)
+                        
+                    # Get post link
+                    self.refresh_selenium()
+                    link_elem = post.find_element(By.CSS_SELECTOR, self.selector_link)
+                    link = link_elem.get_attribute("href")
                     
-                    row.append(elem_text)
+                    # Skip post if already scraped
+                    if link in posts_links:
+                        continue
                     
-                # Save post type
-                post_type = "post"
-                if row[-1]:
-                    post_type = "shared"
-                row.append(post_type)
+                    # Save post link in history
+                    posts_links.append (link)
                     
-                # Save data in list
-                self.data.append(row)
-                logger.debug (row)
-          
+                    # Incress counter
+                    posts_num += 1
+                    
+                    # Get text data from posts based in selectors
+                    row = [link]
+                    clean_words = ["\n", "comments", "shares", "comment", "share"]
+                    for selector in self.selectors_text.values():
+                        try:
+                            elem_text = post.find_element(By.CSS_SELECTOR, selector).text
+                        except:
+                            elem_text = ""
+                        else:
+                            elem_text = " ".join([word for word in elem_text.split() if word not in clean_words])
+                        
+                        row.append(elem_text)
+                        
+                    # Save post type
+                    post_type = "post"
+                    if row[-1]:
+                        post_type = "shared"
+                    row.append(post_type)
+                        
+                    # Save data in list
+                    self.data.append(row)
+                    logger.debug (row)
+                    
+                # Validate if there are found new posts
+                if posts_num == last_posts_num or posts_num >= self.max_posts:
+                    break
+                
+                # Update counters
+                last_posts_num = posts_num
+                
+                # Scroll down for load more posts
+                logger.info (f"\tPosts scraped: {posts_num}")
+                logger.info ("\tLoading more posts...")
+                self.go_bottom()
+                sleep(3)
+                self.refresh_selenium()
+                
     def get_data (self):
         """ return post scraped data as a nested list """
         return self.data
@@ -139,6 +147,7 @@ if __name__ == "__main__":
     post_scraper.scrape_posts()
     data = post_scraper.get_data()
     
+    print ()
     logger.info ("Saving data in csv file...")    
     csv_path = os.path.join (CURRENT_FOLDER, "posts.csv")
     with open (csv_path, "w", encoding="utf-8", newline='') as file:
