@@ -31,6 +31,7 @@ class PostsScraper (WebScraping):
         }
         self.selector_post = "div[aria-posinset]"
         self.selector_link = 'span[id^="jsc_c"] a.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd'
+        self.selector_link_hidden = f'{self.selector_link}[href="#"]'
         self.selector_show_all = f'{self.selectors_text["text"]} div.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd[role="button"][role="button"]'
         self.users = users
         self.data = [["link"] + list(self.selectors_text.keys()) + ["type"]]
@@ -44,6 +45,7 @@ class PostsScraper (WebScraping):
         # Loop for each user
         for user in self.users:
 
+            print ()
             logger.info (f"Current user: {user}")
 
             # Open user profile
@@ -58,30 +60,34 @@ class PostsScraper (WebScraping):
             posts_links = []
 
             # Loop for load all posts
-            while True:
-
-                # Loop for each post visible in the current page
+            more_posts = True
+            while more_posts:
+                
                 logger.info(f"\tScraping current posts...")
-                posts = self.get_elems(self.selector_post)                
-                for post in posts:
-                        
-                    # Hover for load post link
-                    link_elem = post.find_element(By.CSS_SELECTOR, self.selector_link)
+                
+                # Hover for load all post links, if links are hidden
+                link_elems = self.get_elems(self.selector_link_hidden)
+                for link_elem in link_elems:
                     try:
                         hover = ActionChains(self.driver).move_to_element(link_elem).perform()
                     except:
                         pass
-                    
-                    # Display full text of current post
+                
+                # Display full text of all post
+                show_all_buttons = self.get_elems(self.selector_show_all)
+                for show_all_button in show_all_buttons:
                     try:
-                        show_all_button = post.find_element(By.CSS_SELECTOR, self.selector_show_all)
+                        self.driver.execute_script("arguments[0].click();", show_all_button)
                     except:
                         pass
-                    else:
-                        self.driver.execute_script("arguments[0].click();", show_all_button)
+                    
+                self.refresh_selenium()
+
+                # Loop for each post visible in the current page
+                posts = self.get_elems(self.selector_post)                
+                for post in posts:
                         
                     # Get post link
-                    self.refresh_selenium()
                     link_elem = post.find_element(By.CSS_SELECTOR, self.selector_link)
                     link = link_elem.get_attribute("href")
                     
@@ -118,19 +124,22 @@ class PostsScraper (WebScraping):
                     self.data.append(row)
                     logger.debug (row)
                     
-                # Validate if there are found new posts
-                if posts_num == last_posts_num or posts_num >= self.max_posts:
-                    break
+                    # Validate if there are found new posts
+                    if posts_num == last_posts_num or posts_num >= self.max_posts:
+                        more_posts = False
+                        break
                 
                 # Update counters
+                logger.info (f"\tPosts scraped: {posts_num}")
                 last_posts_num = posts_num
                 
                 # Scroll down for load more posts
-                logger.info (f"\tPosts scraped: {posts_num}")
                 logger.info ("\tLoading more posts...")
                 self.go_bottom()
                 sleep(3)
                 self.refresh_selenium()
+                
+            logger.info (f"\tTotal posts scraped: {posts_num}")
                 
     def get_data (self):
         """ return post scraped data as a nested list """
