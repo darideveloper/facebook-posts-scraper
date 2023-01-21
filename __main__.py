@@ -4,14 +4,12 @@ from logs import logger
 from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 from scraping_manager.automate import WebScraping
+from selenium.webdriver.common.action_chains import ActionChains
 
 load_dotenv()
 
 # paths
 CURRENT_FOLDER = os.path.dirname(__file__)
-
-# Start scraper
-
 
 class PostsScraper (WebScraping):
 
@@ -34,7 +32,7 @@ class PostsScraper (WebScraping):
             # "shared_user": '.x1y332i5 > .x1a8lsjc.x1swvt13.x1pi30zi .xu06os2.x1ok221b strong > span'
         }
         self.selector_post = "div[aria-posinset]"
-        self.selector_link = 'a.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd'
+        self.selector_link = 'span[id^="jsc_c"] a.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd'
         self.selector_show_all = f'{self.selectors_text["text"]} div.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd[role="button"][role="button"]'
         self.users = users
 
@@ -82,6 +80,10 @@ class PostsScraper (WebScraping):
             posts = self.get_elems(self.selector_post)                
             for post in posts:
                                 
+                # Hover for load post link
+                link_elem = post.find_element(By.CSS_SELECTOR, self.selector_link)
+                hover = ActionChains(self.driver).move_to_element(link_elem).perform()
+                
                 # Display full text of current post
                 try:
                     show_all_button = post.find_element(By.CSS_SELECTOR, self.selector_show_all)
@@ -89,10 +91,14 @@ class PostsScraper (WebScraping):
                     pass
                 else:
                     self.driver.execute_script("arguments[0].click();", show_all_button)
-                    self.refresh_selenium()
-
+                    
+                # Get post link
+                self.refresh_selenium()
+                link_elem = post.find_element(By.CSS_SELECTOR, self.selector_link)
+                link = link_elem.get_attribute("href")
+                
                 # Get text data from posts based in selectors
-                row = []
+                row = [link]
                 clean_words = ["\n", "comments", "shares", "comment", "share"]
                 for selector in self.selectors_text.values():
                     # elem_text = " ".join(list(map(lambda elem: elem.text, post.find_elements(By.CSS_SELECTOR, selector))))
@@ -106,8 +112,7 @@ class PostsScraper (WebScraping):
                     row.append(elem_text)
 
                 data.append(row)
-                print (row)
-                print ()
+                logger.debug (row)
                 
             print ()
 
