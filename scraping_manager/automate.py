@@ -478,9 +478,6 @@ class WebScraping ():
             # Ignore error
             else: 
                 self.driver.execute_script("window.stop();")
-
-
-    
     
     def click_js (self, selector): 
         """

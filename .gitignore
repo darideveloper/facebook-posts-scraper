@@ -13,3 +13,4 @@ db.*
 *.pyc
 posts.csv
 keywords.txt
+csv
