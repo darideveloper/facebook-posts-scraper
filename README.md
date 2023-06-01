@@ -42,82 +42,82 @@ Project type: **client's project**
 
 # Details
 
-The project opens each profius page, scroll for load all the posts, extract the data from each posts and validate if the post have specific keywords.\r
-\r
-The data extract is:\r
-\r
-* user\r
-* link\r
-* text\r
-* reactions number\r
-* comments number\r
-* shares number\r
-* shared form user (just in case that the post is shared)\r
-* type (post or shared post)\r
+The project opens each profius page, scroll for load all the posts, extract the data from each posts and validate if the post have specific keywords.
+
+The data extract is:
+
+* user
+* link
+* text
+* reactions number
+* comments number
+* shares number
+* shared form user (just in case that the post is shared)
+* type (post or shared post)
 * keyword found (if the post have one ore more of the keywords)
 
 # Install
 
-## Prerequisites\r
-\r
-* [Google chrome](https://www.google.com/intl/es-419/chrome/)\r
-* [Python >=3.10](https://www.python.org/)\r
-* [Git](https://git-scm.com/)\r
-\r
-## Installation\r
-\r
-1. Clone the repo\r
-   \\`\\`\\`sh\r
-   git clone https://github.com/darideveloper/facebook-posts-scraper.git\r
-   \\`\\`\\`\r
-2. Install python packages (opening a terminal in the project folder)\r
-   \\`\\`\\`sh\r
-   python -m pip install -r requirements.txt \r
-   \\`\\`\\`
+## Prerequisites
+
+* [Google chrome](https://www.google.com/intl/es-419/chrome/)
+* [Python >=3.10](https://www.python.org/)
+* [Git](https://git-scm.com/)
+
+## Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/darideveloper/facebook-posts-scraper.git
+   ```
+2. Install python packages (opening a terminal in the project folder)
+   ```sh
+   python -m pip install -r requirements.txt 
+   ```
 
 # Settings
 
-Update your settings in the \\`.env\\` file:\r
- \\`\\`\\`sh\r
-\tCHROME_PATH = C:\\Users\\<<your-user-name>>\\AppData\\Local\\Google\\Chrome\\User Data # Path of your chrome data folder\r
-\tSHOW_BROWSER = False # Show or hide the google chrome window\r
-\tMAX_POSTS = 50 # Max number of posts to extract from each user\r
- \\`\\`\\`
+Update your settings in the `.env` file:
+ ```sh
+tCHROME_PATH = C:Users<<your-user-name>>AppDataLocalGoogleChromeUser Data # Path of your chrome data folder
+tSHOW_BROWSER = False # Show or hide the google chrome window
+tMAX_POSTS = 50 # Max number of posts to extract from each user
+ ```
 
 # Run
 
-1. Login in your facebook account in the google chrome browser.\r
-2. Set the users in the \\`users.txt\\` file (the user name is the last part of the url). Sample: \r
-    \\`\\`\\`txt\r
-    abdenago.lopezh\r
-    freddyvega\r
-    sunoticiasuy\r
-    profile.php?id=100011069504105\r
-    Dragster.Systems\r
-    ReneRojas1968\r
-    \\`\\`\\`\r
-3. Set the keywords in the \\`keywords.txt\\` file. Sapmple:\r
-    \\`\\`\\`txt\r
-    and\r
-    hello\r
-    this\r
-    el\r
-    la\r
-    y\r
-    este\r
-    \\`\\`\\`\r
-4. Run the script, opening a terminal in the project folder\r
-   \\`\\`\\`sh\r
-   python __main__.py\r
-   \\`\\`\\`\r
-4. The output data will be saved in the \\`posts.csv\\` file.
+1. Login in your facebook account in the google chrome browser.
+2. Set the users in the `users.txt` file (the user name is the last part of the url). Sample: 
+    ```txt
+    abdenago.lopezh
+    freddyvega
+    sunoticiasuy
+    profile.php?id=100011069504105
+    Dragster.Systems
+    ReneRojas1968
+    ```
+3. Set the keywords in the `keywords.txt` file. Sapmple:
+    ```txt
+    and
+    hello
+    this
+    el
+    la
+    y
+    este
+    ```
+4. Run the script, opening a terminal in the project folder
+   ```sh
+   python __main__.py
+   ```
+4. The output data will be saved in the `posts.csv` file.
 
 # Roadmap
 
-- [x] Load users from file\r
-- [x] Load keywords from file\r
-- [x] Scroll for show all the posts\r
-- [x] Extract data from each post\r
+- [x] Load users from file
+- [x] Load keywords from file
+- [x] Scroll for show all the posts
+- [x] Extract data from each post
 - [x] Save data in csv file
 
 
