@@ -79,9 +79,9 @@ The data extract is:
 
 Update your settings in the `.env` file:
  ```sh
-tCHROME_PATH = C:Users<<your-user-name>>AppDataLocalGoogleChromeUser Data # Path of your chrome data folder
-tSHOW_BROWSER = False # Show or hide the google chrome window
-tMAX_POSTS = 50 # Max number of posts to extract from each user
+	CHROME_PATH = C:Users<<your-user-name>>AppDataLocalGoogleChromeUser Data # Path of your chrome data folder
+	SHOW_BROWSER = False # Show or hide the google chrome window
+	MAX_POSTS = 50 # Max number of posts to extract from each user
  ```
 
 # Run
